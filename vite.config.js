@@ -1,8 +1,7 @@
-// vite.config.js
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
 
 export default defineConfig({
-  base: '/my-first-project/', // 👈 use your repo name here
+  base: './', // ✅ Use relative base for Netlify
   plugins: [react()],
-})
+});
