@@ -13,25 +13,43 @@ import toast, { Toaster } from "react-hot-toast";
 export default function Contact() {
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setLoading(true);
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
 
-    emailjs
-      .sendForm("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", e.target, "YOUR_USER_ID")
-      .then(() => {
-        toast.success("Message sent successfully!");
-        setLoading(false);
-        e.target.reset();
-      })
-      .catch(() => {
-        toast.error("Something went wrong. Try again.");
-        setLoading(false);
-      });
+  const formData = {
+    user_name: e.target.user_name.value,
+    user_email: e.target.user_email.value,
+    user_phone: e.target.user_phone.value,
+    message: e.target.message.value,
   };
 
+  try {
+    const response = await fetch("/.netlify/functions/send-email", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
+
+    if (response.ok) {
+      toast.success("Message sent successfully!");
+      e.target.reset();
+    } else {
+      toast.error("Something went wrong. Try again.");
+    }
+  } catch (error) {
+    toast.error("Server error. Try again.");
+  } finally {
+    setLoading(false);
+  }
+};
+
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0f0c29] via-[#302b63] to-[#24243e] text-white px-6 py-12 md:flex md:items-center md:justify-center gap-12">
+      <div className="pt-20 min-h-screen bg-gradient-to-br from-[#0f0c29] via-[#302b63] to-[#24243e] text-white px-6 py-12 md:flex md:items-center md:justify-center gap-12">
+
       <Toaster />
 
       {/* Contact Info */}
@@ -44,8 +62,10 @@ export default function Contact() {
       >
         <h2 className="text-3xl font-extrabold text-white">Contact Me</h2>
         <p className="text-gray-300">
-          I'm open to freelance projects, collaborations, or just a friendly hello. Drop a message and I’ll get back to you soon!
+          I'm open to freelance projects, collaborations, or just a friendly hello.
+          Drop a message and I’ll get back to you soon!
         </p>
+
         <div className="space-y-4 text-sm">
           <div className="flex items-center gap-3">
             <span className="bg-yellow-500 text-black rounded-full p-2 text-lg">📞</span>
@@ -53,7 +73,7 @@ export default function Contact() {
           </div>
           <div className="flex items-center gap-3">
             <span className="bg-yellow-500 text-black rounded-full p-2 text-lg">📍</span>
-            100/3/B/1/A,VIJAYAWIMALARATHNA RD,MAHABUTHGAMUWA,ANGODA
+            100/3/B/1/A, VIJAYAWIMALARATHNA RD, MAHABUTHGAMUWA, ANGODA
           </div>
           <div className="flex items-center gap-3">
             <span className="bg-yellow-500 text-black rounded-full p-2 text-lg">📧</span>
@@ -63,49 +83,19 @@ export default function Contact() {
 
         {/* Social Icons */}
         <div className="flex gap-4 mt-8 text-xl">
-          <motion.a
-            href="https://www.instagram.com/"
-            aria-label="Instagram"
-            target="_blank"
-            rel="noopener noreferrer"
-            whileHover={{ scale: 1.3, rotate: 10 }}
-          >
+          <motion.a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" whileHover={{ scale: 1.3, rotate: 10 }}>
             <FaInstagram />
           </motion.a>
-          <motion.a
-            href="https://web.facebook.com/"
-            aria-label="Facebook"
-            target="_blank"
-            rel="noopener noreferrer"
-            whileHover={{ scale: 1.3, rotate: 10 }}
-          >
+          <motion.a href="https://web.facebook.com/" target="_blank" rel="noopener noreferrer" aria-label="Facebook" whileHover={{ scale: 1.3, rotate: 10 }}>
             <FaFacebookF />
           </motion.a>
-          <motion.a
-            href="https://www.linkedin.com/in/ismail-yousuf-170020342"
-            aria-label="LinkedIn"
-            target="_blank"
-            rel="noopener noreferrer"
-            whileHover={{ scale: 1.3, rotate: 10 }}
-          >
+          <motion.a href="https://www.linkedin.com/in/ismail-yousuf-170020342" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" whileHover={{ scale: 1.3, rotate: 10 }}>
             <FaLinkedinIn />
           </motion.a>
-          <motion.a
-            href="https://www.tiktok.com/@_.mr.ismail._"
-            aria-label="TikTok"
-            target="_blank"
-            rel="noopener noreferrer"
-            whileHover={{ scale: 1.3, rotate: 10 }}
-          >
+          <motion.a href="https://www.tiktok.com/@_.mr.ismail._" target="_blank" rel="noopener noreferrer" aria-label="TikTok" whileHover={{ scale: 1.3, rotate: 10 }}>
             <FaTiktok />
           </motion.a>
-          <motion.a
-            href="https://github.com/Ismail-cloud-hash"
-            aria-label="GitHub"
-            target="_blank"
-            rel="noopener noreferrer"
-            whileHover={{ scale: 1.3, rotate: 10 }}
-          >
+          <motion.a href="https://github.com/Ismail-cloud-hash" target="_blank" rel="noopener noreferrer" aria-label="GitHub" whileHover={{ scale: 1.3, rotate: 10 }}>
             <FaGithub />
           </motion.a>
         </div>
@@ -120,6 +110,7 @@ export default function Contact() {
         viewport={{ once: true }}
       >
         <h3 className="text-2xl font-bold mb-6 text-white">Get in Touch</h3>
+
         <form className="space-y-4" onSubmit={handleSubmit}>
           <input
             type="text"
@@ -151,7 +142,9 @@ export default function Contact() {
           <button
             type="submit"
             disabled={loading}
-            className="bg-yellow-400 text-black font-semibold py-3 px-6 w-full rounded hover:bg-yellow-500 transition"
+            className={`bg-yellow-400 text-black font-semibold py-3 px-6 w-full rounded transition hover:bg-yellow-500 ${
+              loading ? "opacity-60 cursor-not-allowed" : ""
+            }`}
           >
             {loading ? "Sending..." : "Let's Connect"}
           </button>

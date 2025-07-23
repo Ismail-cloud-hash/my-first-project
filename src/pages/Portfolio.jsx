@@ -1,33 +1,67 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaGithub, FaExternalLinkAlt, FaTimes } from "react-icons/fa";
+import { FaGithub, FaExternalLinkAlt, FaTimes, FaInstagram, FaFacebookF, FaLinkedinIn, FaTiktok } from "react-icons/fa";
 import aboutPhoto from "../assets/about-photo.jpg";
+import SYSTEMPHOTO from "../assets/SYSTEM-v2.png";
+import SYSTEMPHOTOS from "../assets/SYSTEM-v3.png";
+import SYSTEMPHOTOSS from "../assets/SYSTEM-v4.png";
+import SYSTEMPHOTOSSS from "../assets/SYSTEM-v5.png";
+import SYSTEMPHOTOSSSS from "../assets/SYSTEM-v6.png";
+import SYSTEMPHOTOSSSSS from "../assets/SYSTEM-v7.png";
 
 const projectsData = [
   {
-    title: "Crypto App",
-    type: "web",
-    image: aboutPhoto,
-    github: "https://github.com/yourprofile",
-    live: "https://yourdomain.com/crypto-app",
+  title: "Student Management System",
+  type: "desktop", // or "web" if you want it under Web filter
+  image: SYSTEMPHOTO, // or another image you've imported
+  github: "https://github.com/Ismail-cloud-hash/Student-Management-System-Java",
+  live: "", // leave blank if no download
   },
   {
-    title: "MobileHub",
-    type: "mobile",
-    image: aboutPhoto,
-    github: "https://github.com/yourprofile",
-    live: "https://yourdomain.com/mobilehub",
-  },
-  {
-    title: "Dashboard UI",
-    type: "design",
-    image: aboutPhoto,
+    title: "Learnova (Figma Design)",
+    type: "design", // You can also use "figma" if you want to add a new filter
+    image: SYSTEMPHOTOS, // Replace with a proper thumbnail later if you have
     github: "",
-    live: "",
+    live: "https://www.figma.com/community/file/1520770301574373903",
   },
+  {
+    title: "MadZoo Console App",
+    type: "desktop", // or "design" if you prefer
+    image: SYSTEMPHOTOSS, // or upload a relevant screenshot and import it
+    github: "https://github.com/Ismail-cloud-hash/madzoo-console-app",
+    live: "", // you can leave this empty for now
+  },
+
+  {
+    title: "ATM Console App",
+    type: "desktop", // or "design" if you prefer
+    image: SYSTEMPHOTOSSS, // or upload a relevant screenshot and import it
+    github: "https://github.com/Ismail-cloud-hash/atm-console-app",
+    live: "", // you can leave this empty for now
+  },
+
+  {
+  title: "Gym Management System",
+  type: "desktop",
+  image: SYSTEMPHOTOSSSS, // make sure you have a screenshot in /assets
+  github: "https://github.com/Ismail-cloud-hash/gym-management-system",
+  live: "", // optional: link to .exe file or demo video
+},
+
+{
+  title: "Benz Planet Website",
+  type: "desktop",
+  image: SYSTEMPHOTOSSSSS, // make sure you have a screenshot in /assets
+  github: "https://github.com/Ismail-cloud-hash/car-wed",
+  live: "https://ismail-cloud-hash.github.io/car-wed/", // optional: link to .exe file or demo video
+},
+
+  
+
+
 ];
 
-const filters = ["all", "web", "mobile", "design"];
+const filters = ["all", "desktop", "design",];
 
 export default function Portfolio() {
   const [activeTab, setActiveTab] = useState("all");
@@ -37,8 +71,17 @@ export default function Portfolio() {
     ? projectsData
     : projectsData.filter((p) => p.type === activeTab);
 
+  // Close modal with Escape key
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") setModalProject(null);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   return (
-    <div className="bg-black text-white min-h-screen py-16 px-4 md:px-20">
+      <div className="pt-20 bg-black text-white min-h-screen py-16 px-4 md:px-20">
       <motion.h2
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -48,9 +91,7 @@ export default function Portfolio() {
       >
         My Work
       </motion.h2>
-      <p className="text-center text-gray-400 mb-10">
-        Browse featured projects below
-      </p>
+      <p className="text-center text-gray-400 mb-10">Browse featured projects below</p>
 
       {/* Filter Buttons */}
       <div className="flex justify-center gap-4 mb-10 flex-wrap">
@@ -60,9 +101,9 @@ export default function Portfolio() {
             onClick={() => setActiveTab(tab)}
             className={`px-4 py-1 rounded-full border ${
               activeTab === tab
-                ? "bg-pink-600 text-white"
-                : "text-white border-white"
-            } transition`}
+                ? "bg-pink-600 text-white border-pink-600"
+                : "text-white border-white hover:bg-pink-600 hover:text-white transition"
+            }`}
           >
             {tab.charAt(0).toUpperCase() + tab.slice(1)}
           </button>
@@ -70,7 +111,7 @@ export default function Portfolio() {
       </div>
 
       {/* Project Grid */}
-      <div className="grid md:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
         {filtered.map((project, idx) => (
           <motion.div
             key={idx}
@@ -81,11 +122,7 @@ export default function Portfolio() {
             transition={{ duration: 0.5 }}
             viewport={{ once: true }}
           >
-            <img
-              src={project.image}
-              alt={project.title}
-              className="w-full h-48 object-cover"
-            />
+            <img src={project.image} alt={project.title} className="w-full h-48 object-cover" />
             <div className="p-4">
               <h3 className="text-xl font-semibold">{project.title}</h3>
               <p className="text-sm text-gray-400 capitalize">{project.type}</p>
@@ -98,14 +135,14 @@ export default function Portfolio() {
       <AnimatePresence>
         {modalProject && (
           <motion.div
-            className="fixed inset-0 bg-black bg-opacity-80 backdrop-blur-sm flex justify-center items-center z-50"
+            className="fixed inset-0 bg-black/80 backdrop-blur-sm flex justify-center items-center z-50 px-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setModalProject(null)}
           >
             <motion.div
-              className="bg-zinc-800 p-6 rounded-lg relative w-full max-w-2xl mx-4"
+              className="bg-zinc-800 p-6 rounded-lg relative w-full max-w-2xl"
               initial={{ scale: 0.8 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0.8 }}
@@ -130,12 +167,18 @@ export default function Portfolio() {
                     href={modalProject.github}
                     target="_blank"
                     rel="noreferrer"
+                    className="hover:text-pink-500"
                   >
                     <FaGithub />
                   </a>
                 )}
                 {modalProject.live && (
-                  <a href={modalProject.live} target="_blank" rel="noreferrer">
+                  <a
+                    href={modalProject.live}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="hover:text-pink-500"
+                  >
                     <FaExternalLinkAlt />
                   </a>
                 )}
@@ -145,24 +188,54 @@ export default function Portfolio() {
         )}
       </AnimatePresence>
 
-       {/* Social Links */}
-          <div className="mt-12 flex justify-center gap-6 text-3xl">
-            <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" className="hover:text-pink-500 transition hover:scale-125 duration-300" aria-label="Instagram">
-              <i className="fab fa-instagram"></i>
-            </a>
-            <a href="https://web.facebook.com/" target="_blank" rel="noopener noreferrer" className="hover:text-blue-600 transition hover:scale-125 duration-300" aria-label="Facebook">
-              <i className="fab fa-facebook-f"></i>
-            </a>
-            <a href="https://www.linkedin.com/in/ismail-yousuf-170020342" target="_blank" rel="noopener noreferrer" className="hover:text-blue-500 transition hover:scale-125 duration-300" aria-label="LinkedIn">
-              <i className="fab fa-linkedin-in"></i>
-            </a>
-            <a href="https://www.tiktok.com/@_.mr.ismail._" target="_blank" rel="noopener noreferrer" className="hover:text-black dark:hover:text-white transition hover:scale-125 duration-300" aria-label="TikTok">
-              <i className="fab fa-tiktok"></i>
-            </a>
-            <a href="https://github.com/Ismail-cloud-hash" target="_blank" rel="noopener noreferrer" className="hover:text-gray-800 dark:hover:text-gray-200 transition hover:scale-125 duration-300" aria-label="GitHub">
-              <i className="fab fa-github"></i>
-            </a>
-          </div>
+      {/* Social Links */}
+      <div className="mt-12 flex justify-center gap-6 text-3xl">
+        <a
+          href="https://www.instagram.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hover:text-pink-500 transition hover:scale-125 duration-300"
+          aria-label="Instagram"
+        >
+          <FaInstagram />
+        </a>
+        <a
+          href="https://web.facebook.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hover:text-blue-600 transition hover:scale-125 duration-300"
+          aria-label="Facebook"
+        >
+          <FaFacebookF />
+        </a>
+        <a
+          href="https://www.linkedin.com/in/ismail-yousuf-170020342"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hover:text-blue-500 transition hover:scale-125 duration-300"
+          aria-label="LinkedIn"
+        >
+          <FaLinkedinIn />
+        </a>
+        <a
+          href="https://www.tiktok.com/@_.mr.ismail._"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hover:text-white transition hover:scale-125 duration-300"
+          aria-label="TikTok"
+        >
+          <FaTiktok />
+        </a>
+        <a
+          href="https://github.com/Ismail-cloud-hash"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hover:text-gray-300 transition hover:scale-125 duration-300"
+          aria-label="GitHub"
+        >
+          <FaGithub />
+        </a>
+      </div>
     </div>
   );
 }

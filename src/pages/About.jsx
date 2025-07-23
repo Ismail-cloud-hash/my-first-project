@@ -16,7 +16,7 @@ export default function About() {
   const [activeTab, setActiveTab] = useState("skills");
 
   return (
-    <div className="min-h-screen bg-white text-black dark:bg-black dark:text-white px-6 py-16">
+      <div className="pt-20 min-h-screen bg-white text-black dark:bg-black dark:text-white px-6 py-16">
       <div className="max-w-6xl mx-auto">
         <h1 className="text-5xl font-bold text-center text-pink-600 mb-8">About Me</h1>
 
@@ -124,7 +124,7 @@ export default function About() {
               <p><span className="text-pink-600 font-semibold"> 2022 - DIPLOMA IN INFORMATION TECHNOLOGY</span> Pearson BTEC Completed </p>
 
               <p><span className="text-pink-600 font-semibold"> English Language Course</span> Intermediate Level
-              British Council – Completed </p>
+            British Council – Completed </p>
 
               <p><span className="text-pink-600 font-semibold">Higher National Diploma:</span> Pearson BTEC</p>
               <p><span className="text-pink-600 font-semibold">Top-up Degree:</span> UK University via Achievers Campus</p>

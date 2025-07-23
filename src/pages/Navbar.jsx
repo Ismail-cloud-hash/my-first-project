@@ -1,7 +1,14 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
-import { FaBars, FaTimes, FaArrowUp } from "react-icons/fa";
+import {
+  FaArrowUp,
+  FaHome,
+  FaUser,
+  FaFolderOpen,
+  FaEnvelope,
+} from "react-icons/fa";
+import { BsSun, BsMoon } from "react-icons/bs";
 import logo from "../assets/YI.png";
 
 export default function Navbar() {
@@ -9,20 +16,20 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
-  const [darkMode, setDarkMode] = useState(() =>
-    localStorage.getItem("theme") === "light" ? false : true
+  const [darkMode, setDarkMode] = useState(
+    () => localStorage.getItem("theme") !== "light"
   );
 
   const location = useLocation();
 
   const links = [
-    { name: "Home", path: "/" },
-    { name: "About", path: "/about" },
-    { name: "Portfolio", path: "/portfolio" },
-    { name: "Contact", path: "/contact" },
+    { name: "Home", path: "/", icon: <FaHome /> },
+    { name: "About", path: "/about", icon: <FaUser /> },
+    { name: "Portfolio", path: "/portfolio", icon: <FaFolderOpen /> },
+    { name: "Contact", path: "/contact", icon: <FaEnvelope /> },
   ];
 
-  const toggleMenu = () => setMenuOpen(!menuOpen);
+  const toggleMenu = () => setMenuOpen((prev) => !prev);
   const closeMenu = () => setMenuOpen(false);
 
   const toggleTheme = () => {
@@ -46,11 +53,16 @@ export default function Navbar() {
     };
 
     window.addEventListener("scroll", handleScroll);
-    document.body.style.overflow = menuOpen ? "hidden" : "auto";
+
+    if (menuOpen) {
+      document.body.classList.add("overflow-hidden");
+    } else {
+      document.body.classList.remove("overflow-hidden");
+    }
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
-      document.body.style.overflow = "auto";
+      document.body.classList.remove("overflow-hidden");
     };
   }, [menuOpen]);
 
@@ -62,23 +74,21 @@ export default function Navbar() {
         style={{ width: `${scrollProgress}%` }}
       ></div>
 
+      {/* Navbar */}
       <nav
-        className={`fixed w-full top-0 left-0 z-50 px-4 py-4 sm:px-8 flex justify-between items-center
-        transition-all duration-300 backdrop-blur-md bg-opacity-80
-        ${darkMode ? "bg-black text-white" : "bg-white text-black"}
-        ${scrolled ? "shadow-md" : ""}`}
+        className={`fixed top-0 left-0 w-full h-20 z-50 px-4 py-4 sm:px-8 flex justify-between items-center transition-all duration-300
+        ${darkMode ? "bg-black text-white" : "bg-white text-black"} ${scrolled ? "shadow-md backdrop-blur-md bg-opacity-80" : ""}`}
       >
         {/* Logo */}
         <Link to="/" onClick={closeMenu}>
           <motion.img
             src={logo}
             alt="Logo"
-            className="h-16 w-auto object-contain"
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: 1, scale: 1.2 }}
-            whileHover={{ scale: 1.3, rotate: 3 }}
-            whileTap={{ scale: 1.1 }}
-            transition={{ duration: 0.5 }}
+            className="h-14 sm:h-16 w-auto object-contain"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            whileHover={{ scale: 1.1, rotate: 2 }}
+            transition={{ duration: 0.4 }}
           />
         </Link>
 
@@ -88,61 +98,84 @@ export default function Navbar() {
             <li key={name}>
               <Link
                 to={path}
-                className={`transition hover:text-pink-500 relative group ${
+                className={`relative group transition ${
                   location.pathname === path ? "text-pink-500 font-semibold" : ""
                 }`}
               >
                 {name}
+                <span
+                  className={`absolute left-0 -bottom-1 h-0.5 bg-pink-500 transition-all scale-x-0 group-hover:scale-x-100 origin-left
+                  ${location.pathname === path ? "scale-x-100" : ""}`}
+                  style={{ width: "100%" }}
+                />
               </Link>
             </li>
           ))}
         </ul>
 
-        {/* Dark/Light Toggle */}
+        {/* Theme Toggle (Desktop) */}
         <button
           onClick={toggleTheme}
-          className="hidden md:block text-sm border px-4 py-1 rounded-full hover:bg-pink-500 hover:text-white transition"
+          className="hidden md:flex items-center gap-2 text-sm border px-4 py-1 rounded-full hover:bg-pink-500 hover:text-white transition"
         >
-          {darkMode ? "Light" : "Dark"} Mode
+          {darkMode ? <BsSun /> : <BsMoon />} {darkMode ? "Light" : "Dark"}
         </button>
 
-        {/* Mobile Toggle */}
-        <button
-          onClick={toggleMenu}
-          className="md:hidden text-2xl z-50 relative focus:outline-none"
-        >
-          {menuOpen ? <FaTimes /> : <FaBars />}
-        </button>
+        {/* Hamburger (Animated) */}
+        <div className="md:hidden z-[60]">
+          <button
+            onClick={toggleMenu}
+            className="relative w-8 h-8 focus:outline-none group"
+          >
+            <div
+              className={`absolute h-0.5 w-8 bg-current transform transition duration-300 ease-in-out ${
+                menuOpen ? "rotate-45 top-3.5" : "top-2"
+              }`}
+            />
+            <div
+              className={`absolute h-0.5 w-8 bg-current transition-all duration-300 ease-in-out ${
+                menuOpen ? "opacity-0" : "top-4"
+              }`}
+            />
+            <div
+              className={`absolute h-0.5 w-8 bg-current transform transition duration-300 ease-in-out ${
+                menuOpen ? "-rotate-45 top-3.5" : "top-6"
+              }`}
+            />
+          </button>
+        </div>
 
-        {/* Mobile Menu + Backdrop */}
+        {/* Mobile Menu */}
         <AnimatePresence>
           {menuOpen && (
             <>
+              {/* Backdrop */}
               <motion.div
-                className="fixed inset-0 bg-black/50 backdrop-blur-md z-40"
+                className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 onClick={closeMenu}
               />
 
+              {/* Drawer */}
               <motion.div
-                className={`fixed top-0 right-0 w-4/5 sm:w-2/3 h-full z-50 p-8
-                ${darkMode ? "bg-black text-white" : "bg-white text-black"}`}
+                className="fixed top-0 right-0 w-[75%] sm:w-[60%] h-full bg-pink-600 text-white z-50 p-8 rounded-l-3xl shadow-2xl border-l border-white/10"
                 initial={{ x: "100%" }}
                 animate={{ x: 0 }}
                 exit={{ x: "100%" }}
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
               >
-                <ul className="flex flex-col gap-6 mt-10 text-lg font-medium">
-                  {links.map(({ name, path }) => (
-                    <li key={name}>
+                <ul className="mt-16 space-y-6 text-xl font-medium">
+                  {links.map(({ name, path, icon }) => (
+                    <li key={name} className="flex items-center gap-4">
+                      {icon}
                       <Link
                         to={path}
                         onClick={closeMenu}
-                        className={`block py-2 ${
+                        className={`${
                           location.pathname === path
-                            ? "text-pink-500 font-semibold"
+                            ? "font-bold underline"
                             : ""
                         }`}
                       >
@@ -151,13 +184,14 @@ export default function Navbar() {
                     </li>
                   ))}
                 </ul>
-
+                  <br />
                 <button
                   onClick={toggleTheme}
-                  className="mt-8 border px-4 py-2 rounded hover:bg-pink-500 hover:text-white transition"
+                  className="mt-8 flex items-center gap-2 px-5 py-2 mx-auto border-2 rounded-full border-white text-white hover:bg-white hover:text-pink-600 transition duration-300"
                 >
-                  Toggle {darkMode ? "Light" : "Dark"} Mode
+                  {darkMode ? "🌞 Light Mode" : "🌙 Dark Mode"}
                 </button>
+
               </motion.div>
             </>
           )}
